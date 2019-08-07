@@ -8,3 +8,4 @@ Lempel-Ziv_C.h
 
 //Func
 void Array_Read(int *, char *, int *);
+void Array_Read_TEST(void);

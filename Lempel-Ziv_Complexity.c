@@ -25,6 +25,18 @@ void Array_Read(int *array, char *filename, int *array_length){
     fclose(fp);
     return;
 }
+void Array_Read_TEST(void){
+
+    char *fn = "test.txt";
+    int array[20];
+    int array_length = 0;
+    Array_Read(array,fn,&array_length);
+    for(int i = 0; i < 20; i++){
+        if(i != 0){printf(" ");}
+        printf("%d",array[i]);
+    }
+    printf("\n");
+}
 
 //LZ function
 
