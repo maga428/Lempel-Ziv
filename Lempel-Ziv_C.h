@@ -15,3 +15,5 @@ void Array_Read(int *array, char *filename, int *array_length);
 void Array_Read_TEST(void);
 void Array_Read_column(char *array, char *filename, int *array_length);
 void Array_Read__column_TEST(void);
+
+int LZ_Complexity(char *array);
