@@ -57,8 +57,34 @@ void Array_Read__column_TEST(void){
 }
 
 //LZ function
-int LZ_C(int *array){
+int LZ_Complexity(char *array){
     //make index.txt
-    
+    int n = sizeof array / sizeof array[0];
+    int p = 0; //Pointer
+    int C = 1; //Complexity
+    int u = 1; //Length of current prefix.
+    int v = 1; //Length of the current component for current p
+    int vmax = v; //Final length used for the current component.
+
+    while(u + v < n){
+        if(array[p+v] == array[u+v]){
+            v++;
+        }else{
+            if(vmax < v) vmax = v;
+            p++;
+            if(p == u){
+                C++;
+                u += vmax;
+                p = 0;
+                vmax = v;
+            }else{
+                v = 1;
+            }
+        }
+    }
+    if(v != 1){
+        C += 1;
+    }
+    return C;
 }
 

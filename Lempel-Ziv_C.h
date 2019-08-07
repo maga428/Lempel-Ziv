@@ -6,6 +6,9 @@ Lempel-Ziv_C.h
 #include<stdio.h>
 #include<stdlib.h>
 
+/*Macro*/
+#define ARRAY_LENGTH 20
+
 /*Func*/
 //file read.
 void Array_Read(int *array, char *filename, int *array_length);
