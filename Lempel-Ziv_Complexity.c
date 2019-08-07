@@ -5,7 +5,8 @@ Lempel-Ziv_Complexity.c
 */
 #include"Lempel-Ziv_C.h"
 
-void Array_Read(int *array, char *filename){
+//Read Array data.
+void Array_Read(int *array, char *filename, int *array_length){
     FILE *fp = fopen(filename,"r");
     int e = 0; //array element recode.
     int co = 0; //counter.
@@ -19,7 +20,11 @@ void Array_Read(int *array, char *filename){
         array[co] = e;
         co++;
     }
+    *array_length = co;
     // printf("count = %d\n",co);
     fclose(fp);
     return;
 }
+
+//LZ function
+

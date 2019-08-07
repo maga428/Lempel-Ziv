@@ -7,4 +7,4 @@ Lempel-Ziv_C.h
 #include<stdlib.h>
 
 //Func
-void Array_Read(int*, char*);
+void Array_Read(int *, char *, int *);
