@@ -50,22 +50,21 @@ void Array_Read_column(char *array, char *filename, int *array_length){
 }
 void Array_Read__column_TEST(void){
     char *f_name = "test_column.txt";
-    char array[32];
+    char array[20];
     int array_length = 0;
     Array_Read_column(array,f_name,&array_length);
     printf("%s\n",array);
 }
 
-//LZ function
-int LZ_Complexity(char *array){
-    //make index.txt
-    int n = sizeof array / sizeof array[0];
+//LZ77 function
+int LZ77_Complexity(char *array){
+    const int n = ARRAY_LENGTH; //Length of array.
     int p = 0; //Pointer
     int C = 1; //Complexity
     int u = 1; //Length of current prefix.
     int v = 1; //Length of the current component for current p
     int vmax = v; //Final length used for the current component.
-
+    //printf("n = %d\n",n);
     while(u + v < n){
         if(array[p+v] == array[u+v]){
             v++;
@@ -87,4 +86,32 @@ int LZ_Complexity(char *array){
     }
     return C;
 }
+void LZ77_Complexity_TEST(void){
+    char *f_name = "test_column.txt";
+    char array[ARRAY_LENGTH];
+    int array_length = 0;
+    Array_Read_column(array,f_name,&array_length);
+    printf("%s\n",array);
+    int C = LZ77_Complexity(array);
+    printf("C = %d\n",C);
+}
 
+//LZ78 function
+int LZ78_Complexity(char *array, char *filename){
+    //make index.txt
+    char *F_name;
+    sprintf(F_name,"index_of_%s",filename);
+    FILE *index_fp = fopen(".\\Index\\%s",F_name);
+    if(index_fp == NULL){
+        printf("F:LZ78_Complexity index text can not make.\n");
+    }
+    const int n = ARRAY_LENGTH; //Length of array.
+    int p = 0; //Pointer
+    int C = 1; //Complexity
+    int u = 1; //Length of current prefix.
+    int v = 1; //Length of the current component for current p
+    int vmax = v; //Final length used for the current component. 
+
+
+    return C;
+}
