@@ -1,7 +1,7 @@
 # Lempel-Ziv
 Lempel-Ziv. Randomness evaluation algorithm?
 
-##Unfinished.
+Unfinished.
 I am making it for personal use.
 So I have not generalized it or plan to do it.
 Maybe if there is a request, I do it...
