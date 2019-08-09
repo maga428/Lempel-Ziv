@@ -115,110 +115,118 @@ struct node *make_list(char *word, int length){
     return new_node;
 }
 //listの検索
-void Search_list(struct node *no, int *flag, char *array, int curent_p, int *curent_v){
+void Search_list(struct node *no, int *flag, char *array, int curent_p, int curent_v){
+    if(*(flag) == 0) return;
     if(no->child_p != NULL){
         Search_list(no->child_p, flag, array, curent_p, curent_v);
     }
-    if(strncmp(&array[curent_p], no->sub_word, no->sub_word_length) != 0){
-        *(flag) = 1;
-        if(curent_v > no->sub_word_length){ *(curent_v) = no->sub_word_length; }
+    if(no->sub_word_length == curent_v){
+        if(strncmp(&array[curent_p], no->sub_word, curent_v) == 0){
+            *(flag) = 0;
+        }
     }
     return;
 }
-// <<index list の表示
+//index list の表示
+void Show_list(struct node *index){
+    int co = 0;
+    printf("Sub word:");
+    while(index->sub_word[co] != '\n'){
+        printf("%c",index->sub_word[co]);
+        co++;
+    }
+    printf("\tlength:%d\n",index->sub_word_length);
+    if(index->child_p != NULL){
+        Show_list(index->child_p);
+    }
+    return;
+}
+//free list メモリの開放
+void Free_list(struct node *index){
+    if(index->child_p != NULL){ 
+        Free_list(index->child_p); 
+    }
+    free(index);
+    return;
+}
+//Be output index to a text file.
+void Op_index(struct node *index, FILE *fp){
+    int co = 0;
+    fprintf(fp,"Sub word: ");
+    while(index->sub_word[co] != '\n'){
+        // if(co != 0){
+        //     fprintf(fp,",");
+        // }
+        fprintf(fp,"%c",index->sub_word[co]);//一文字ずつ表示
+        co++;
+    }
+    fprintf(fp,"\n");
+    // fprintf(fp,"length:%d,\n",index->sub_word_length);
+    if(index->child_p != NULL){
+        Op_index(index->child_p,fp);
+    }
+    return;
+}
+void Output_index(struct node *index, char *f_name, int c){
+    char f_n[62];
+    sprintf(f_n,".\\Index\\Index_%s",f_name);
+    FILE *fp = fopen(f_n,"w");
+    if(fp == NULL){
+        printf("F:Output_index() file can not open.\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(fp,"Complexity = %d\n",c);
+    Op_index(index,fp); //list output.
+    fclose(fp);
+}
 
+//LZ78 main 
 int LZ78_Complexity(char *array, char *filename){
+    /* var */
     int n = ARRAY_LENGTH; //Length of array.
-    int p = 1; //Pointer
-    int u = 0; //index prefix.
-    int v = 0; //curent pointer
-    int vmax =0;
-    int C = 0; //Complexity
-    int sub_word[ARRAY_LENGTH];
+    int p = 1; //Pointer 現在見ている文字列の始点
+    int v = 1; //Pointer 現在見ている文字列の終点
+    int C = 1; //Complexity 複雑度 高いほどランダム性が高い.
+    int flag = 1;
+    char sub_word[ARRAY_LENGTH];
 
-    struct node index;
-
-    sprintf(index.sub_word,"%s",&array[0]);
+    struct node index; 
+    /*Prefix index is set*/
+    strncpy(index.sub_word,array,1);
+    index.sub_word[1] = '\n';
     index.sub_word_length = 1;
     index.child_p = NULL;
 
-
+    /*LZ Complexity calculat start.*/
     while(p < n){
-
-    }
-    
-}
-/*
-int LZ78_Complexity(char *array, char *filename){
-    //make index.txt
-    char F_name[124];
-    sprintf(F_name,".\\Index\\index_of_%s",filename);
-    FILE *index_fp;
-    if((index_fp  = fopen(F_name,"w")) == NULL){
-        printf("F:LZ78_Complexity index text can not make.\n");
-        exit(EXIT_FAILURE);
-    }
-    int n = ARRAY_LENGTH; //Length of array.
-    int p = 1; //Pointer
-    int u = 2; //corent pointer.
-    int v = 0;
-    int C = 0; //Complexity
-    char sub_word[ARRAY_LENGTH];
-    char index_word[ARRAY_LENGTH];
-    int sub_word_len = 1;
-    int flag = 0;
-
-    fprintf(index_fp,"%c\n",array[0]);
-    fclose(index_fp);
-    //printf("%s\n",F_name);
-    while(p < n){
-        
-        if((index_fp = fopen(F_name,"r")) == NULL){ printf("F:LZ78_Complexity index text can not read.\n"); exit(EXIT_FAILURE);}
-        while(fscanf(index_fp,"%s",index_word) != EOF){
-            flag = 0;
-            v = 0;
-            for(int i = p, j = 0; i < n ;i++, j++){
-                //printf("i = %d\n",i);
-                if(index_word[j] == '\0'){
-                    v = j;
-                    break;
-                }
-                if(strncmp(&array[i],&index_word[j],1) != 0){
-                    printf("array[%d] = %c\nindex[%d] = %c\n",i,array[i],j,index_word[j]);
-                    flag = 1;
-                    if(v < j) v = j;
-                }
+        flag = 1;
+        v = 1;
+        while(flag && p < n){
+            Search_list(&index, &flag, array, p, v); //list search. indexに同じWordがあったらvを加算してもう一度search.
+            if(flag == 0){
+                flag = 1;
+                v++;
+            }else if(flag == 1){//indexに登録されていないWordを追加してbreak.
+                strncpy(sub_word, array + p, v );
+                sub_word[v] = '\n';
+                mk_list(&index, sub_word, v);
+                p += v;
+                C++;
+                break;
             }
-            //if(flag == 1) break;
         }
-        fclose(index_fp);
-        //sub_word is added to index.
-        if((index_fp = fopen(F_name,"a")) == NULL){ printf("F:LZ78_Complexity index text can not open.\n"); exit(EXIT_FAILURE);}
-        for(int i = p; i <= p+v; i++){
-            printf("v = %d\n",v);
-            fprintf(index_fp,"%c",array[i]);
-        }
-        fprintf(index_fp,"\n");
-        fclose(index_fp);
-        p += v+1;
     }
-    
-    if((index_fp = fopen(F_name,"r")) == NULL){ printf("F:LZ78_Complexity index text can not read. count index words.\n"); exit(EXIT_FAILURE);}
-    while(fscanf(index_fp,"%s",index_word) != EOF){
-        printf("%s\n",index_word);
-        C++;
-    }
-    fclose(index_fp);
+    Show_list(&index);
+    Output_index(&index,filename,C);
+    Free_list(&index);
     return C;
 }
-*/
-
 void LZ78_Complexity_TEST(){
     char *f_name = "test_column.txt";
     char array[ARRAY_LENGTH];
     int array_length = 0;
     Array_Read_column(array,f_name,&array_length);
-    printf("%s\n",array);
+    printf("Target : %s\n",array);
     int C = LZ78_Complexity(array,f_name);
     printf("C = %d\n",C);
     return;
