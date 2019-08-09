@@ -97,6 +97,58 @@ void LZ77_Complexity_TEST(void){
 }
 
 //LZ78 function
+//listの追加
+void mk_list(struct node *index, char *word, int length){
+    if(index->child_p == NULL){
+        index->child_p = make_list(word, length);
+    }else if(index->child_p != NULL){
+        mk_list(index->child_p, word, length);
+    }
+    return;
+}
+struct node *make_list(char *word, int length){
+    struct node *new_node = (struct node *)malloc(sizeof(struct node));
+
+    strcpy(new_node->sub_word,word);
+    new_node->sub_word_length = length;
+    new_node->child_p = NULL;
+    return new_node;
+}
+//listの検索
+void Search_list(struct node *no, int *flag, char *array, int curent_p, int *curent_v){
+    if(no->child_p != NULL){
+        Search_list(no->child_p, flag, array, curent_p, curent_v);
+    }
+    if(strncmp(&array[curent_p], no->sub_word, no->sub_word_length) != 0){
+        *(flag) = 1;
+        if(curent_v > no->sub_word_length){ *(curent_v) = no->sub_word_length; }
+    }
+    return;
+}
+// <<index list の表示
+
+int LZ78_Complexity(char *array, char *filename){
+    int n = ARRAY_LENGTH; //Length of array.
+    int p = 1; //Pointer
+    int u = 0; //index prefix.
+    int v = 0; //curent pointer
+    int vmax =0;
+    int C = 0; //Complexity
+    int sub_word[ARRAY_LENGTH];
+
+    struct node index;
+
+    sprintf(index.sub_word,"%s",&array[0]);
+    index.sub_word_length = 1;
+    index.child_p = NULL;
+
+
+    while(p < n){
+
+    }
+    
+}
+/*
 int LZ78_Complexity(char *array, char *filename){
     //make index.txt
     char F_name[124];
@@ -159,6 +211,7 @@ int LZ78_Complexity(char *array, char *filename){
     fclose(index_fp);
     return C;
 }
+*/
 
 void LZ78_Complexity_TEST(){
     char *f_name = "test_column.txt";

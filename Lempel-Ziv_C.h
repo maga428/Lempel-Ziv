@@ -22,5 +22,11 @@ int LZ77_Complexity(char *array);
 void LZ77_Complexity_TEST(void);
 
 //LZ78
+struct node{
+    char *sub_word[10];
+    int sub_word_length;
+    struct node *child_p;
+};
+
 int LZ78_Complexity(char *array, char *filename);
 void LZ78_Complexity_TEST(void);
