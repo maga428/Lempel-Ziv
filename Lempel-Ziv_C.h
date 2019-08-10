@@ -8,7 +8,7 @@ Lempel-Ziv_C.h
 #include<string.h>
 
 /*Macro*/
-#define ARRAY_LENGTH 16
+#define ARRAY_LENGTH 50
 
 /*Func*/
 //file read.
@@ -23,7 +23,7 @@ void LZ77_Complexity_TEST(void);
 
 /* LZ78 */
 struct node{
-    char sub_word[20];
+    char sub_word[25];
     int sub_word_length;
     struct node *child_p;
 };
@@ -37,6 +37,10 @@ void Search_list(struct node *no, int *flag, char *array, int curent_p, int cure
 void Show_list(struct node *index);
 //free list メモリの開放
 void Free_list(struct node *index);
+
+//output index to a text file.
+void Op_index(struct node *index, FILE *fp);
+void Output_index(struct node *index, char *f_name, int c);
 
 //LZ78 main
 int LZ78_Complexity(char *array, char *filename);

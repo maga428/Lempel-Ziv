@@ -206,6 +206,7 @@ int LZ78_Complexity(char *array, char *filename){
             if(flag == 0){
                 flag = 1;
                 v++;
+                if(p+v >= n) break;
             }else if(flag == 1){//indexに登録されていないWordを追加してbreak.
                 strncpy(sub_word, array + p, v );
                 sub_word[v] = '\n';
@@ -215,8 +216,9 @@ int LZ78_Complexity(char *array, char *filename){
                 break;
             }
         }
+        if(p+v >= n) break;
     }
-    Show_list(&index);
+    //Show_list(&index);
     Output_index(&index,filename,C);
     Free_list(&index);
     return C;
