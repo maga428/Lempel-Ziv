@@ -149,7 +149,7 @@ void Free_list(struct node *index){
     free(index);
     return;
 }
-//Be output index to a text file.
+//output index to a text file.
 void Op_index(struct node *index, FILE *fp){
     int co = 0;
     fprintf(fp,"Sub word: ");
