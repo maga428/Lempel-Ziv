@@ -203,10 +203,11 @@ int LZ78_Complexity(char *array, char *filename){
         v = 1;
         while(flag && p < n){
             Search_list(&index, &flag, array, p, v); //list search. indexに同じWordがあったらvを加算してもう一度search.
+            // printf("p = %d_v = %d\n",p,v);
             if(flag == 0){
                 flag = 1;
                 v++;
-                if(p+v >= n) break;
+                if(p+v > n) break;
             }else if(flag == 1){//indexに登録されていないWordを追加してbreak.
                 strncpy(sub_word, array + p, v );
                 sub_word[v] = '\n';
@@ -216,7 +217,6 @@ int LZ78_Complexity(char *array, char *filename){
                 break;
             }
         }
-        if(p+v >= n) break;
     }
     //Show_list(&index);
     Output_index(&index,filename,C);
@@ -232,4 +232,39 @@ void LZ78_Complexity_TEST(){
     int C = LZ78_Complexity(array,f_name);
     printf("C = %d\n",C);
     return;
+}
+
+int Rondom_sequence_test(void){
+    char array[ARRAY_LENGTH];
+    char F_name[20];
+    int C = 0;
+    
+    FILE *fp = fopen("Random_C.csv","w");
+    if(fp == NULL){printf("File can not opened.\n"); exit(EXIT_FAILURE); }
+    fprintf(fp,"No.,C\n");
+    for(int i = 0; i < RONDOM_SEQUENCE_NUM; i++){
+        sprintf(F_name,"%d.txt", i+1);
+        for(int i = 0; i < ARRAY_LENGTH; i++){
+            int r = genrand_int32() % 3;
+            if(r == 0){
+                // snprintf(&array[i],1, "%d", 0);
+                array[i] = '0';
+            }else if(r == 1){
+                // snprintf(&array[i],1, "%d", 1);
+                array[i] = '1';
+            }else if(r == 2){
+                // sprintf(&array[i], "%d", 2);
+                array[i] = '2';
+            }
+            // printf("%c",array[i]);
+        }
+        // printf("\n");
+        // printf("%s\n",array);
+        C = LZ78_Complexity(array,F_name);
+        fprintf(fp, "%d,%d\n",i+1,C);
+    }
+    fclose(fp);
+
+    printf("END\n");
+    return EXIT_FAILURE;
 }

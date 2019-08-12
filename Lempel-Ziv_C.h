@@ -9,6 +9,7 @@ Lempel-Ziv_C.h
 
 /*Macro*/
 #define ARRAY_LENGTH 50
+#define RONDOM_SEQUENCE_NUM 1000
 
 /*Func*/
 //file read.
@@ -23,7 +24,7 @@ void LZ77_Complexity_TEST(void);
 
 /* LZ78 */
 struct node{
-    char sub_word[25];
+    char sub_word[250];
     int sub_word_length;
     struct node *child_p;
 };
@@ -45,3 +46,6 @@ void Output_index(struct node *index, char *f_name, int c);
 //LZ78 main
 int LZ78_Complexity(char *array, char *filename);
 void LZ78_Complexity_TEST(void);
+
+//Random Sequences test
+void Rondom_Cequence_test(void);
