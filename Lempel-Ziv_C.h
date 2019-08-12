@@ -6,6 +6,7 @@ Lempel-Ziv_C.h
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<time.h>
 
 /*Macro*/
 #define ARRAY_LENGTH 50
@@ -24,7 +25,7 @@ void LZ77_Complexity_TEST(void);
 
 /* LZ78 */
 struct node{
-    char sub_word[250];
+    char sub_word[100];
     int sub_word_length;
     struct node *child_p;
 };
@@ -48,4 +49,19 @@ int LZ78_Complexity(char *array, char *filename);
 void LZ78_Complexity_TEST(void);
 
 //Random Sequences test
-void Rondom_Cequence_test(void);
+int Rondom_Cequence_test(void);
+int Human_C(void);
+
+
+/*MT*/
+#define MT_N 624
+#define MT_M 397
+#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
+#define UPPER_MASK 0x80000000UL /* most significant w-r bits */
+#define LOWER_MASK 0x7fffffffUL /* least significant r bits */
+
+static unsigned long mt[MT_N]; /* the array for the state vector  */
+static int mti = MT_N + 1; /* mti==MT_N+1 means mt[MT_N] is not initialized */
+void init_genrand(unsigned long s);
+unsigned long genrand_int32(void);
+/*MT*/

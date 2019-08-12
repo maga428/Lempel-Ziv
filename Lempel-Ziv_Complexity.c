@@ -5,6 +5,7 @@ Lempel-Ziv_Complexity.c
 */
 #include"Lempel-Ziv_C.h"
 
+
 //Read Array data : low file.
 void Array_Read(int *array, char *filename, int *array_length){
     FILE *fp = fopen(filename,"r");
@@ -203,20 +204,21 @@ int LZ78_Complexity(char *array, char *filename){
         v = 1;
         while(flag && p < n){
             Search_list(&index, &flag, array, p, v); //list search. indexに同じWordがあったらvを加算してもう一度search.
-            // printf("p = %d_v = %d\n",p,v);
+            //printf("p = %d_v = %d\n",p,v);
             if(flag == 0){
                 flag = 1;
                 v++;
-                if(p+v > n) break;
             }else if(flag == 1){//indexに登録されていないWordを追加してbreak.
                 strncpy(sub_word, array + p, v );
                 sub_word[v] = '\n';
                 mk_list(&index, sub_word, v);
                 p += v;
+                v = 0;
                 C++;
                 break;
             }
         }
+        if(p+v > n) break;
     }
     //Show_list(&index);
     Output_index(&index,filename,C);
@@ -234,7 +236,9 @@ void LZ78_Complexity_TEST(){
     return;
 }
 
-int Rondom_sequence_test(void){
+
+//
+int Rondom_Cequence_test(void){
     char array[ARRAY_LENGTH];
     char F_name[20];
     int C = 0;
@@ -246,25 +250,124 @@ int Rondom_sequence_test(void){
         sprintf(F_name,"%d.txt", i+1);
         for(int i = 0; i < ARRAY_LENGTH; i++){
             int r = genrand_int32() % 3;
-            if(r == 0){
-                // snprintf(&array[i],1, "%d", 0);
-                array[i] = '0';
-            }else if(r == 1){
-                // snprintf(&array[i],1, "%d", 1);
-                array[i] = '1';
-            }else if(r == 2){
-                // sprintf(&array[i], "%d", 2);
-                array[i] = '2';
-            }
+            sprintf(&array[i],"%d",r);
+            // if(r == 0){
+            //     // snprintf(&array[i],1, "%d", 0);
+            //     array[i] = '0';
+            // }else if(r == 1){
+            //     // snprintf(&array[i],1, "%d", 1);
+            //     array[i] = '1';
+            // }else if(r == 2){
+            //     // sprintf(&array[i], "%d", 2);
+            //     array[i] = '2';
+            // }
             // printf("%c",array[i]);
         }
         // printf("\n");
-        // printf("%s\n",array);
+        printf("%s\n",array);
         C = LZ78_Complexity(array,F_name);
         fprintf(fp, "%d,%d\n",i+1,C);
     }
     fclose(fp);
 
     printf("END\n");
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
+int Human_C(void){
+    FILE *A_fp, *C_fp;
+    char array[ARRAY_LENGTH];
+    char index[24];
+    int C[492];
+    int co = 1;
+
+    for(int i = 0; i < 492; i++){
+        C[i] = -1;
+    }
+
+    /*file open */
+    //hand data read
+    A_fp = fopen("HandData_column.txt","r");
+    if(A_fp == NULL){printf("HandData_column.txt can not read.\n"); exit(EXIT_FAILURE);}
+    /*---*/
+    
+    while(fscanf(A_fp,"%s",array) != EOF){  //array read.
+        printf("No.%d : %s\n",co,array);
+        sprintf(index,"%d",co);  //index file name set.
+        C[co-1] = LZ78_Complexity(array,index);   //col Complexity.
+        printf("C = %d\n",C[co-1]);
+        //fprintf(C_fp,"%d,%d\n",co,C);    //output complexity.
+        co++;
+    }
+
+    fclose(A_fp);
+
+    C_fp = fopen("Human_C.csv","w");
+    if(C_fp == NULL){printf("Human_C.txt can not opened.\n"); exit(EXIT_FAILURE);}
+    fprintf(C_fp,"No.,C\n");
+    for(int i = 0; i < 492; i++){
+        fprintf(C_fp,"%d,%d\n",i+1,C[i]);
+    }
+    fclose(C_fp);
+    return EXIT_SUCCESS;
+}
+
+
+
+
+
+/*
+__MT__
+Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
+All rights reserved.
+*/
+void init_genrand(unsigned long s){
+	mt[0] = s & 0xffffffffUL;
+	for (mti = 1; mti<MT_N; mti++) {
+		mt[mti] =
+			(1812433253UL * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti);
+		/* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
+		/* In the previous versions, MSBs of the seed affect   */
+		/* only MSBs of the array mt[].                        */
+		/* 2002/01/09 modified by Makoto Matsumoto             */
+		mt[mti] &= 0xffffffffUL;
+		/* for >32 bit machines */
+	}
+}
+
+unsigned long genrand_int32(void)
+{
+	unsigned long y;
+	static unsigned long mag01[2] = { 0x0UL, MATRIX_A };
+	/* mag01[x] = x * MATRIX_A  for x=0,1 */
+
+	if (mti >= MT_N) { /* generate N words at one time */
+		int kk;
+
+		if (mti == MT_N + 1)   /* if init_genrand() has not been called, */
+			init_genrand(5489UL); /* a default initial seed is used */
+
+		for (kk = 0; kk<MT_N - MT_M; kk++) {
+			y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
+			mt[kk] = mt[kk + MT_M] ^ (y >> 1) ^ mag01[y & 0x1UL];
+		}
+		for (; kk<MT_N - 1; kk++) {
+			y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
+			mt[kk] = mt[kk + (MT_M - MT_N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
+		}
+		y = (mt[MT_N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
+		mt[MT_N - 1] = mt[MT_M - 1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+
+		mti = 0;
+	}
+
+	y = mt[mti++];
+
+	/* Tempering */
+	y ^= (y >> 11);
+	y ^= (y << 7) & 0x9d2c5680UL;
+	y ^= (y << 15) & 0xefc60000UL;
+	y ^= (y >> 18);
+
+	return y;
+}
+/* MT */
